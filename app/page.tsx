@@ -1,4 +1,6 @@
+import Delivery from "@/components/Delivery";
 import Header from "../components/Header";
+import Instagram from "../components/Instagram";
 import Hero from "../components/Hero";
 import Stats from "../components/Stats";
 import Services from "../components/Services";
@@ -22,7 +24,11 @@ export default function Home() {
 
       <Gallery />
 
+      <Instagram />
+
       <Products />
+
+      <Delivery />
 
       <Testimonials />
 

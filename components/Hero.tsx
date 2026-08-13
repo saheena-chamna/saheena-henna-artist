@@ -5,7 +5,7 @@ export default function Hero() {
     <section
       className="relative min-h-[90vh] flex items-center justify-center bg-cover bg-center"
       style={{
-        backgroundImage: "url('/images/hero.jpg')",
+        backgroundImage: "url('/images/home henna.jpg')",
       }}
     >
       {/* Dark Overlay */}
@@ -30,21 +30,28 @@ export default function Hero() {
 
         <div className="flex flex-col sm:flex-row justify-center gap-5">
 
-          <Link
-            href="/booking"
-            className="bg-yellow-500 hover:bg-yellow-600 text-white px-8 py-4 rounded-full font-bold text-lg transition duration-300 shadow-lg"
-          >
-            📅 Book Appointment
-          </Link>
+  <Link
+    href="#booking"
+    className="bg-yellow-500 hover:bg-yellow-600 text-white px-8 py-4 rounded-full font-bold text-lg transition duration-300 shadow-lg"
+  >
+    📅 Book Appointment
+  </Link>
 
-          <Link
-            href="/shop"
-            className="border-2 border-white hover:bg-white hover:text-black text-white px-8 py-4 rounded-full font-bold text-lg transition duration-300"
-          >
-            🛍 Shop Products
-          </Link>
+  <Link
+   href="#products"
+    className="border-2 border-white hover:bg-white hover:text-black text-white px-8 py-4 rounded-full font-bold text-lg transition duration-300"
+  >
+    🛍 Shop Products
+  </Link>
 
-        </div>
+  <a
+    href="#delivery"
+    className="bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-full font-bold text-lg transition duration-300 shadow-lg"
+  >
+    🚚 Delivery & Collection
+  </a>
+
+</div>
 
       </div>
     </section>
