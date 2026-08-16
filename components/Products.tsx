@@ -37,15 +37,20 @@ const products = [
       "Natural Rizwana nail henna cone, popularly known in Cape Town as a Rizwana cone. Designed specifically for beautiful natural henna application on nails and fingertips.",
   },
 
-  {
-    name: "Henna Powder (250g)",
-    category: "Henna",
-    price: "R60",
-    image: "/images/15.jpg",
-    description:
-      "Quality henna powder suitable for preparing natural henna.",
-  },
-
+ {
+  name: "Natural Henna Powder",
+  category: "Henna",
+  price: "From R30",
+  image: "/images/henna-powder.jpg",
+  description:
+    "Natural henna powder is made from the dried and finely ground leaves of the Lawsonia inermis plant. Traditionally used for natural hair colouring, hair care, nail staining and temporary henna body art.",
+  sizes: [
+    { size: "100g", price: 30 },
+    { size: "250g", price: 60 },
+    { size: "500g", price: 110 },
+    { size: "1kg", price: 150 },
+  ],
+},
   {
     name: "Halaal Henna Nail Polish",
     category: "Nail Polish",

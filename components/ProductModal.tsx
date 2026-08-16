@@ -3,6 +3,11 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 
+type ProductSize = {
+  size: string;
+  price: number;
+};
+
 type Product = {
   name: string;
   price: string;
@@ -10,6 +15,7 @@ type Product = {
   description?: string;
   colours?: string[];
   colourImages?: Record<string, string>;
+  sizes?: ProductSize[];
 };
 
 type ProductModalProps = {
@@ -22,31 +28,42 @@ export default function ProductModal({
   onClose,
 }: ProductModalProps) {
   const [colour, setColour] = useState("");
-  const [quantity, setQuantity] = useState(1);
-  const [selectedImage, setSelectedImage] = useState("");
+const [quantity, setQuantity] = useState(1);
+const [selectedImage, setSelectedImage] = useState("");
+const [selectedSize, setSelectedSize] = useState("100g");
 
   useEffect(() => {
-    if (product) {
-      setQuantity(1);
-      setSelectedImage(product.image);
+  if (product) {
+    setQuantity(1);
+    setSelectedImage(product.image);
 
-      if (product.name === "Halaal Henna Nail Polish") {
-        setColour("Brown");
-      } else if (product.name === "Instant Henna Cone") {
-        setColour("Black");
-      } else {
-        setColour("");
-      }
+    if (product.name === "Halaal Henna Nail Polish") {
+      setColour("Brown");
+    } else if (product.name === "Instant Henna Cone") {
+      setColour("Black");
+    } else {
+      setColour("");
     }
-  }, [product]);
+
+    if (product.sizes) {
+      setSelectedSize(product.sizes[0].size);
+    }
+  }
+}, [product]);
 
   if (!product) return null;
 
-  const price = Number(
-    product.price.replace("R", "").replace("From ", "").trim()
-  );
+  const selectedSizeData = product.sizes?.find(
+  (item) => item.size === selectedSize
+);
 
-  const total = price * quantity;
+const price = selectedSizeData
+  ? selectedSizeData.price
+  : Number(
+      product.price.replace("R", "").replace("From ", "").trim()
+    );
+
+const total = price * quantity;
 
   const isNailPolish =
     product.name === "Halaal Henna Nail Polish";
@@ -79,6 +96,7 @@ export default function ProductModal({
 I would like to order:
 
 Product: ${product.name}
+${product.sizes ? `Size: ${selectedSize}` : ""}
 ${colour ? `Colour: ${colour}` : ""}
 Quantity: ${quantity}
 Total: R${total}
@@ -327,7 +345,39 @@ Thank you.`;
 
               </div>
             )}
+{/* HENNA POWDER SIZE SELECTION */}
 
+{product.name === "Natural Henna Powder" && product.sizes && (
+  <div className="mt-8">
+
+    <h3 className="font-bold text-lg mb-3">
+      🌿 Choose Size
+    </h3>
+
+    <div className="grid grid-cols-2 gap-3">
+
+      {product.sizes.map((item) => (
+        <button
+          key={item.size}
+          onClick={() => setSelectedSize(item.size)}
+          className={`px-4 py-3 rounded-xl border-2 font-semibold transition ${
+            selectedSize === item.size
+              ? "bg-yellow-600 text-white border-yellow-600"
+              : "border-gray-300 text-gray-700 hover:border-yellow-500 hover:bg-yellow-50"
+          }`}
+        >
+          {item.size} — R{item.price}
+        </button>
+      ))}
+
+    </div>
+
+    <p className="mt-4 text-pink-600 font-semibold">
+      Selected Size: {selectedSize}
+    </p>
+
+  </div>
+)}
             {/* COLOUR SELECTION */}
 
             {availableColours.length > 0 && (
