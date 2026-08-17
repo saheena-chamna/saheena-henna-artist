@@ -17,6 +17,7 @@ type Product = {
   colourImages?: Record<string, string>;
   sizes?: ProductSize[];
   bindiImages?: string[];
+  jewelleryImages?: string[];
 };
 
 type ProductModalProps = {
@@ -32,7 +33,7 @@ export default function ProductModal({
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState("");
   const [selectedSize, setSelectedSize] = useState("100g");
-
+const [deliveryMethod, setDeliveryMethod] = useState("");
   useEffect(() => {
     if (product) {
       setQuantity(1);
@@ -92,41 +93,47 @@ export default function ProductModal({
   };
 
   const orderOnWhatsApp = () => {
-    const selectedBindiNumber =
-      product.name === "Designer Bindis" &&
-      product.bindiImages
-        ? product.bindiImages.indexOf(selectedImage) + 1
-        : null;
+  const selectedBindiNumber =
+    product.name === "Designer Bindis" && product.bindiImages
+      ? product.bindiImages.indexOf(selectedImage) + 1
+      : null;
 
-    const message = `Hello Saheena,
+  const selectedJewelleryNumber =
+    product.name === "Jewellery" && product.jewelleryImages
+      ? product.jewelleryImages.indexOf(selectedImage) + 1
+      : null;
+
+  const message = `Hello Saheena,
 
 I would like to order:
 
 Product: ${product.name}
 ${
-  selectedSizeData
-    ? `Size: ${selectedSize}`
-    : ""
-}
-${
   selectedBindiNumber
     ? `Design: Bindi ${String(selectedBindiNumber).padStart(2, "0")}`
     : ""
 }
+${
+  selectedJewelleryNumber
+    ? `Design: Jewellery ${String(selectedJewelleryNumber).padStart(2, "0")}`
+    : ""
+}
 ${colour ? `Colour: ${colour}` : ""}
 Quantity: ${quantity}
-Total: R${total}
+Delivery Method: ${deliveryMethod || "Not selected"}
+${
+  product.name === "Jewellery"
+    ? "Please send me the price for this design."
+    : `Total: R${total}`
+}
 
 Thank you.`;
 
-    window.open(
-      `https://wa.me/27614969371?text=${encodeURIComponent(
-        message
-      )}`,
-      "_blank"
-    );
-  };
-
+  window.open(
+    `https://wa.me/27614969371?text=${encodeURIComponent(message)}`,
+    "_blank"
+  );
+};
   return (
     <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
 
@@ -262,7 +269,55 @@ Thank you.`;
               )}
 
           </div>
+{/* JEWELLERY DESIGNS */}
 
+{product.name === "Jewellery" &&
+  product.jewelleryImages &&
+  product.jewelleryImages.length > 0 && (
+    <div className="mt-6">
+
+      <h3 className="text-xl font-bold text-yellow-700 mb-4">
+        💍 Choose Your Jewellery Design
+      </h3>
+
+      <p className="text-gray-600 mb-4">
+        59 beautiful jewellery designs currently in stock.
+        Prices vary by design. Please enquire for the price of your selected design.
+      </p>
+
+      <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
+
+        {product.jewelleryImages.map((image, index) => (
+          <button
+            key={image}
+            type="button"
+            onClick={() => setSelectedImage(image)}
+            className={`border-2 rounded-xl p-2 transition ${
+              selectedImage === image
+                ? "border-yellow-600 bg-yellow-50"
+                : "border-gray-200 hover:border-yellow-400"
+            }`}
+          >
+
+            <Image
+              src={image}
+              alt={`Jewellery Design ${index + 1}`}
+              width={120}
+              height={120}
+              className="w-full h-28 object-contain rounded-lg"
+            />
+
+            <p className="text-sm font-semibold text-gray-700 mt-1">
+              Design {String(index + 1).padStart(2, "0")}
+            </p>
+
+          </button>
+        ))}
+
+      </div>
+
+    </div>
+  )}
           {/* RIGHT - PRODUCT DETAILS */}
 
           <div>
@@ -564,7 +619,49 @@ Thank you.`;
               </div>
 
             </div>
+            {/* DELIVERY / COLLECTION */}
 
+            <div className="mt-8">
+
+              <h3 className="font-bold text-lg mb-3">
+                🚚 How would you like to receive your order?
+              </h3>
+
+              <div className="flex flex-col gap-3">
+
+                <button
+                  type="button"
+                  onClick={() => setDeliveryMethod("Courier / Delivery")}
+                  className={`w-full px-5 py-3 rounded-xl border-2 font-semibold transition ${
+                    deliveryMethod === "Courier / Delivery"
+                      ? "bg-green-600 text-white border-green-600"
+                      : "border-gray-300 text-gray-700 hover:border-green-500"
+                  }`}
+                >
+                  🚚 Courier / Delivery
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setDeliveryMethod("Collection")}
+                  className={`w-full px-5 py-3 rounded-xl border-2 font-semibold transition ${
+                    deliveryMethod === "Collection"
+                      ? "bg-yellow-600 text-white border-yellow-600"
+                      : "border-gray-300 text-gray-700 hover:border-yellow-500"
+                  }`}
+                >
+                  📍 Collection
+                </button>
+
+              </div>
+
+              {deliveryMethod && (
+                <p className="mt-3 text-pink-600 font-semibold">
+                  Selected: {deliveryMethod}
+                </p>
+              )}
+
+            </div>
             {/* TOTAL */}
 
             <div className="mt-6 bg-pink-50 rounded-xl p-4">
@@ -575,11 +672,20 @@ Thank you.`;
 
             </div>
 
-            {/* WHATSAPP ORDER */}
+                        {/* WHATSAPP ORDER */}
 
             <button
               type="button"
-              onClick={orderOnWhatsApp}
+              onClick={() => {
+                if (!deliveryMethod) {
+                  alert(
+                    "Please select Courier / Delivery or Collection."
+                  );
+                  return;
+                }
+
+                orderOnWhatsApp();
+              }}
               className="mt-8 w-full bg-green-600 hover:bg-green-700 text-white py-4 rounded-xl font-bold transition"
             >
               Order on WhatsApp
