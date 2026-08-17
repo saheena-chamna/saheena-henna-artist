@@ -16,6 +16,7 @@ type Product = {
   colours?: string[];
   colourImages?: Record<string, string>;
   sizes?: ProductSize[];
+  bindiImages?: string[];
 };
 
 type ProductModalProps = {
@@ -28,42 +29,42 @@ export default function ProductModal({
   onClose,
 }: ProductModalProps) {
   const [colour, setColour] = useState("");
-const [quantity, setQuantity] = useState(1);
-const [selectedImage, setSelectedImage] = useState("");
-const [selectedSize, setSelectedSize] = useState("100g");
+  const [quantity, setQuantity] = useState(1);
+  const [selectedImage, setSelectedImage] = useState("");
+  const [selectedSize, setSelectedSize] = useState("100g");
 
   useEffect(() => {
-  if (product) {
-    setQuantity(1);
-    setSelectedImage(product.image);
+    if (product) {
+      setQuantity(1);
+      setSelectedImage(product.image);
 
-    if (product.name === "Halaal Henna Nail Polish") {
-      setColour("Brown");
-    } else if (product.name === "Instant Henna Cone") {
-      setColour("Black");
-    } else {
-      setColour("");
-    }
+      if (product.name === "Halaal Henna Nail Polish") {
+        setColour("Brown");
+      } else if (product.name === "Instant Henna Cone") {
+        setColour("Black");
+      } else {
+        setColour("");
+      }
 
-    if (product.sizes) {
-      setSelectedSize(product.sizes[0].size);
+      if (product.sizes && product.sizes.length > 0) {
+        setSelectedSize(product.sizes[0].size);
+      }
     }
-  }
-}, [product]);
+  }, [product]);
 
   if (!product) return null;
 
   const selectedSizeData = product.sizes?.find(
-  (item) => item.size === selectedSize
-);
+    (item) => item.size === selectedSize
+  );
 
-const price = selectedSizeData
-  ? selectedSizeData.price
-  : Number(
-      product.price.replace("R", "").replace("From ", "").trim()
-    );
+  const price = selectedSizeData
+    ? selectedSizeData.price
+    : Number(
+        product.price.replace("R", "").replace("From ", "").trim()
+      );
 
-const total = price * quantity;
+  const total = price * quantity;
 
   const isNailPolish =
     product.name === "Halaal Henna Nail Polish";
@@ -91,12 +92,27 @@ const total = price * quantity;
   };
 
   const orderOnWhatsApp = () => {
+    const selectedBindiNumber =
+      product.name === "Designer Bindis" &&
+      product.bindiImages
+        ? product.bindiImages.indexOf(selectedImage) + 1
+        : null;
+
     const message = `Hello Saheena,
 
 I would like to order:
 
 Product: ${product.name}
-${product.sizes ? `Size: ${selectedSize}` : ""}
+${
+  selectedSizeData
+    ? `Size: ${selectedSize}`
+    : ""
+}
+${
+  selectedBindiNumber
+    ? `Design: Bindi ${String(selectedBindiNumber).padStart(2, "0")}`
+    : ""
+}
 ${colour ? `Colour: ${colour}` : ""}
 Quantity: ${quantity}
 Total: R${total}
@@ -125,9 +141,11 @@ Thank you.`;
           ×
         </button>
 
+        {/* MAIN GRID */}
+
         <div className="grid md:grid-cols-2 gap-8">
 
-          {/* IMAGE */}
+          {/* LEFT - IMAGE */}
 
           <div>
 
@@ -155,6 +173,7 @@ Thank you.`;
 
                     <button
                       key={name}
+                      type="button"
                       onClick={() =>
                         changeColour(name)
                       }
@@ -180,9 +199,71 @@ Thank you.`;
                 </div>
               )}
 
+            {/* BINDI DESIGNS */}
+
+            {product.name === "Designer Bindis" &&
+              product.bindiImages &&
+              product.bindiImages.length > 0 && (
+
+                <div className="mt-6">
+
+                  <h3 className="text-xl font-bold text-yellow-700 mb-4">
+                    ✨ Choose Your Bindi Design
+                  </h3>
+
+                  <p className="text-gray-600 mb-4">
+                    14 beautiful designs currently in stock.
+                  </p>
+
+                  <div className="grid grid-cols-4 gap-3">
+
+                    {product.bindiImages.map(
+                      (image, index) => (
+
+                        <button
+                          key={image}
+                          type="button"
+                          onClick={() =>
+                            setSelectedImage(image)
+                          }
+                          className={`border-2 rounded-xl p-2 transition ${
+                            selectedImage === image
+                              ? "border-yellow-600 bg-yellow-50"
+                              : "border-gray-200 hover:border-yellow-400"
+                          }`}
+                        >
+
+                          <Image
+                            src={image}
+                            alt={`Designer Bindi ${
+                              index + 1
+                            }`}
+                            width={120}
+                            height={120}
+                            className="w-full h-24 object-contain rounded-lg"
+                          />
+
+                          <p className="text-sm font-semibold text-gray-700 mt-1">
+                            Design{" "}
+                            {String(index + 1).padStart(
+                              2,
+                              "0"
+                            )}
+                          </p>
+
+                        </button>
+
+                      )
+                    )}
+
+                  </div>
+
+                </div>
+              )}
+
           </div>
 
-          {/* PRODUCT DETAILS */}
+          {/* RIGHT - PRODUCT DETAILS */}
 
           <div>
 
@@ -191,7 +272,9 @@ Thank you.`;
             </h2>
 
             <p className="text-3xl font-bold text-pink-600 mt-4">
-              {product.price}
+              {selectedSizeData
+                ? `R${selectedSizeData.price}`
+                : product.price}
             </p>
 
             {/* DESCRIPTION */}
@@ -252,7 +335,9 @@ Thank you.`;
                     <li>✔ Easy to Apply</li>
                     <li>✔ Quick Drying</li>
                     <li>✔ 10–12ml Bottle</li>
-                    <li>✔ Approximately 50 Fingers Per Bottle</li>
+                    <li>
+                      ✔ Approximately 50 Fingers Per Bottle
+                    </li>
 
                   </ul>
 
@@ -267,7 +352,8 @@ Thank you.`;
                   <ul className="space-y-2 text-gray-700">
 
                     <li>
-                      💧 Add 2–3 drops of water if the polish becomes dry.
+                      💧 Add 2–3 drops of water if the
+                      polish becomes dry.
                     </li>
 
                     <li>
@@ -279,7 +365,8 @@ Thank you.`;
                     </li>
 
                     <li>
-                      ⚠ Colour may fade faster with frequent exposure to water or chemical-based soaps.
+                      ⚠ Colour may fade faster with frequent
+                      exposure to water or chemical-based soaps.
                     </li>
 
                   </ul>
@@ -302,18 +389,23 @@ Thank you.`;
 
                   <ul className="space-y-2 text-gray-700">
 
-                    <li>✔ Premium Quality Saree</li>
-
                     <li>
-                      ✔ Includes Matching Unstitched Blouse Piece
+                      ✔ Premium Quality Saree
                     </li>
 
                     <li>
-                      ✔ Tailor the Blouse to Your Preferred Style & Size
+                      ✔ Includes Matching Unstitched
+                      Blouse Piece
                     </li>
 
                     <li>
-                      ✔ Perfect for Weddings, Eid & Special Occasions
+                      ✔ Tailor the Blouse to Your
+                      Preferred Style & Size
+                    </li>
+
+                    <li>
+                      ✔ Perfect for Weddings, Eid &
+                      Special Occasions
                     </li>
 
                     <li>
@@ -333,11 +425,17 @@ Thank you.`;
                   <p className="text-gray-700 leading-7">
 
                     All of our sarees include a
-                    <strong> matching unstitched blouse piece</strong>.
-                    The blouse is supplied as fabric only and is
-                    <strong> not pre-stitched</strong>, allowing you to have it
-                    tailored according to your preferred design, sleeve style
-                    and perfect fit.
+                    <strong>
+                      {" "}matching unstitched blouse piece
+                    </strong>
+                    . The blouse is supplied as fabric only
+                    and is
+                    <strong>
+                      {" "}not pre-stitched
+                    </strong>
+                    , allowing you to have it tailored
+                    according to your preferred design,
+                    sleeve style and perfect fit.
 
                   </p>
 
@@ -345,39 +443,48 @@ Thank you.`;
 
               </div>
             )}
-{/* HENNA POWDER SIZE SELECTION */}
 
-{product.name === "Natural Henna Powder" && product.sizes && (
-  <div className="mt-8">
+            {/* HENNA POWDER SIZE SELECTION */}
 
-    <h3 className="font-bold text-lg mb-3">
-      🌿 Choose Size
-    </h3>
+            {product.name === "Natural Henna Powder" &&
+              product.sizes && (
 
-    <div className="grid grid-cols-2 gap-3">
+                <div className="mt-8">
 
-      {product.sizes.map((item) => (
-        <button
-          key={item.size}
-          onClick={() => setSelectedSize(item.size)}
-          className={`px-4 py-3 rounded-xl border-2 font-semibold transition ${
-            selectedSize === item.size
-              ? "bg-yellow-600 text-white border-yellow-600"
-              : "border-gray-300 text-gray-700 hover:border-yellow-500 hover:bg-yellow-50"
-          }`}
-        >
-          {item.size} — R{item.price}
-        </button>
-      ))}
+                  <h3 className="font-bold text-lg mb-3">
+                    🌿 Choose Size
+                  </h3>
 
-    </div>
+                  <div className="grid grid-cols-2 gap-3">
 
-    <p className="mt-4 text-pink-600 font-semibold">
-      Selected Size: {selectedSize}
-    </p>
+                    {product.sizes.map((item) => (
 
-  </div>
-)}
+                      <button
+                        key={item.size}
+                        type="button"
+                        onClick={() =>
+                          setSelectedSize(item.size)
+                        }
+                        className={`px-4 py-3 rounded-xl border-2 font-semibold transition ${
+                          selectedSize === item.size
+                            ? "bg-yellow-600 text-white border-yellow-600"
+                            : "border-gray-300 text-gray-700 hover:border-yellow-500 hover:bg-yellow-50"
+                        }`}
+                      >
+                        {item.size} — R{item.price}
+                      </button>
+
+                    ))}
+
+                  </div>
+
+                  <p className="mt-4 text-pink-600 font-semibold">
+                    Selected Size: {selectedSize}
+                  </p>
+
+                </div>
+              )}
+
             {/* COLOUR SELECTION */}
 
             {availableColours.length > 0 && (
@@ -393,6 +500,7 @@ Thank you.`;
 
                     <button
                       key={item}
+                      type="button"
                       onClick={() =>
                         changeColour(item)
                       }
@@ -429,6 +537,7 @@ Thank you.`;
               <div className="flex items-center gap-4">
 
                 <button
+                  type="button"
                   onClick={() =>
                     quantity > 1 &&
                     setQuantity(quantity - 1)
@@ -443,6 +552,7 @@ Thank you.`;
                 </span>
 
                 <button
+                  type="button"
                   onClick={() =>
                     setQuantity(quantity + 1)
                   }
@@ -468,6 +578,7 @@ Thank you.`;
             {/* WHATSAPP ORDER */}
 
             <button
+              type="button"
               onClick={orderOnWhatsApp}
               className="mt-8 w-full bg-green-600 hover:bg-green-700 text-white py-4 rounded-xl font-bold transition"
             >

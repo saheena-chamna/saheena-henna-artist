@@ -70,13 +70,29 @@ const products = [
   },
 
   {
-    name: "Bindis",
-    category: "Bindis",
-    price: "R30",
-    image: "/images/12.jpg",
-    description:
-      "Beautiful bindi packs suitable for traditional and special occasions.",
-  },
+  name: "Designer Bindis",
+  category: "Bindis",
+  price: "R30",
+  image: "/images/bindis/bindi-01.jpg",
+  description:
+    "Beautiful designer bindis combining traditional South Asian style with modern fashion. Perfect for weddings, Eid, festivals, parties and everyday styling. Choose from 14 different designs currently in stock.",
+  bindiImages: [
+    "/images/bindis/bindi-01.jpeg",
+    "/images/bindis/bindi-02.jpeg",
+    "/images/bindis/bindi-03.jpeg",
+    "/images/bindis/bindi-04.jpeg",
+    "/images/bindis/bindi-05.jpeg",
+    "/images/bindis/bindi-06.jpeg",
+    "/images/bindis/bindi-07.jpeg",
+    "/images/bindis/bindi-08.jpeg",
+    "/images/bindis/bindi-09.jpeg",
+    "/images/bindis/bindi-10.jpeg",
+    "/images/bindis/bindi-11.jpeg",
+    "/images/bindis/bindi-12.jpeg",
+    "/images/bindis/bindi-13.jpeg",
+    "/images/bindis/bindi-14.jpeg",
+  ],
+},
 
   {
     name: "Elegant Saree",
